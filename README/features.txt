@@ -1,0 +1,109 @@
+For Phase 2, we implemented all of the Mandatory Extensions, i.e.:
+    (1) There will now be many types of events. A one-speaker event is the same as a "talk" from Phase 1. You can have
+    multi-speaker events, like a panel discussion, and no-speaker events, like a party. Events can last as long as you
+    want. You can measure the duration of an event in hours, or minutes. You get to decide.
+        Details: For this part of the extension, we implemented panels, talks, and parties. These events now also have
+        flexible durations down to the minute.
+
+    (2) Events can be canceled + reschedule by at least one organizer.
+        Details: Events can be canceled and rescheduled by an organizer, and other organizers can do the same if
+        given authorization.
+
+    (3) At least one more type of user will be included in your program. For example, an Admin user who can delete
+    messages or events with no attendees, or a VIP user who can access VIP-only events.
+        Details: We added a VIP User. They can access VIP only events.
+
+    (4) Organizers can also create Speaker accounts, Attendee accounts, and any other type of user accounts that are in
+    your program.
+        Details: Organizers can now make any account through User options.
+
+    (5) Each event has a maximum number of people who can attend it. This amount can be set when the event is created
+    and also changed later, by an organizer. Your program should check the maximum capacity for the room where the
+    event will be held, and prevent the number of attendees from going above the room's capacity
+        Details: Events have a maximum size which can be changed by an organizer and is bounded by the room capacity.
+
+The Optional Extensions that we implemented were:
+    (1) Enhance the user's messaging experience by allowing them to "mark as unread", delete, or archive messages after
+    reading them.
+        Details: Users can mark messages as unread, deleted, archived, starred and pinned. Messages when unpinned,
+        unarchived or undeleted go back to their chronological order in the inbox. Additionally, deleted messages are
+        automatically wiped from the deleted messages inbox after they have been there for a specified period of time.
+        For demonstrating purposes, we have designed the program to wipe a deleted message when it has been deleted
+        for approximately 2 minutes.
+
+    (2) Expand the menus available to organizers to allow them to get useful summary stats about the conference.
+    Include app traffic statistics, event enrollment statistics, and top-five lists (or something similar). You should
+    include enough statistics to make this option as complicated as the other ones on this list.
+        Details: Organizers can access detailed statistical information about the conference including numbers of types
+        of users, size of events and more. Data is also plotted with a histogram when meaningful.
+
+    (3) Allow the system to support additional user requests (e.g. dietary restrictions, accessibility requirements)
+    where organizers can tag a request as "pending" or "addressed". All organizers see the same list of requests, so if
+    one tags a request as addressed, all other organizers can log in and see that.
+        Details: The system supports all requests, where an attendee, speaker, or vip user can make any request- the
+        only constraint is that it must be under 200 characters. When requests are made, they are tagged "pending".
+        Then, any organizer can log in and address the requests as "addressed", meaning they are accepted, or they can
+        tag a request as "rejected", meaning it has been rejected. Organizers always have the option to view all
+        requests that have been addressed, or view a specific user's requests.
+
+    (4) Add additional constraints to the scheduling for various types of events (e.g. technology requirements for
+    presentations, tables vs rows of chairs). When organizers are creating events, they can see a suggested list of
+    rooms that fit the requirements of their event.
+        Details: Events can be created with custom numbers of tables, chairs, computers, and a projector. When rooms
+        are created, they will be initialized with some number of tables, chairs, computers, and a projector. Events
+        will have similar parameters, except these would be the objects the event requires to be present in the room
+        in order for the event to occur there. Projector is different from the other three. A room can either have 0
+        or 1 projectors. If a room doesn't contain the minimum equipment according to the event, the event cannot be
+        scheduled in that room.
+
+Features of our own that we implemented were:
+    (1) Events now have associated tags, such as networking, motivational, development, etc. that indicate what type of
+    event this is.
+        Details: When creating an event, a specific tag can be added to the event to categorize it. Users can use this
+        information to help decide on which events they want to sign up for. Users can also search for events with
+        specific tags.
+
+    (2) All data will be stored in a MySQL database.
+        Details: Data will be broken down to their smallest components and saved in the MYSQL database while saving, and will be
+        put back together when the program is started. Theoretically, the code could be reworked to not need to store
+        any sort of hashmap or list of entities anymore. Instead, we could utilise the gateway classes to retrieve
+        information as and when it is required, allowing our operations to execute much faster. This would also give us
+        the ability to retrieve results in sorted order (mysql has its own sort) as opposed to running algorithms that
+        require multiple nested for loops.
+
+    (3) Events can now be searched for by name
+        Details: Users can now search for specific events in the conference by name. This simplifies the process of
+        signing up for an event when the user knows already knows which event they want to sign up for.
+
+    (4) New menus for each type of user
+        Details: Each type of user has a redesigned task menu which they are presented with once they login to the
+        conference. Each user is initially presented with a menu which displays the options which they can select from
+        such as messages, requests, events, and so on. Once a user selects one of these general options, they will be
+        presented with a sub-menu which contains all the tasks that this user can do in that category. The tasks availa-
+        ble in the sub-menus only display tasks that can be done by that particular user based on their status in the
+        conference. The new design also allows users to seamlessly switch between different categories of tasks they
+        would like to perform and reduces the number of options a user sees at any one moment.
+
+    (5) Added company association for all Users.
+        Details: When any type of user signs up for the conference (organizer, vip, speaker and attendee), they have the
+        option to add the name of the corporation for which they are associated with. Users also have the ability to
+        modify the corporation that they are associated with throughout the duration of the conference (they could have
+        networked with other users and received a job offer).
+
+    (6) Added bios for Users.
+        Details: When any type of user signs up for the conference (organizer, vip, speaker and attendee), they have the
+        option to add a bio to their profile. Users also have the ability to modify their bio throughout the duration of
+        the conference. The bio is generally used to describe the user and display some relevant information about them.
+
+Design Patterns Implemented:
+    (1) Factory Design Pattern: UserFactory (used in UserManager) and EventFactory (EventManager). We implemented
+        the factory method in creating subclasses of User and Event to replace direct object construction calls (using the
+        new operator) by calling the methods in the factory classes instead. Therefore, we are able to avoid high coupling
+        between our classes.
+    (2) Dependency Injection: Controllers of all Users (created instances of the users elsewhere and pass them in to the
+     controller rather than hard coding them) - AttendeeController, SpeakerController, OrganizerController, VIPController
+    (3) Liskov Substitution Principle: Lists, Maps, Set (vs ArrayList, HashMap, HashSet) - eventManager, messageManager,
+        userManager, Event, Users
+    (4) Single Responsibility Principle - Message, Event, User (Attendee, Organizer, Speaker, VIP), Request, Room
+
+*With regards to Clean Architecture, we realize that Controllers (rather than Presenters) should handle all System.in functionality, and that is something that would be refactored if we had time to do so.
